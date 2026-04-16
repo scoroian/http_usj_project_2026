@@ -1,0 +1,7 @@
+target/
+server.jar
+logs/server.log
+*.class
+.idea/
+*.iml
+.vscode/
