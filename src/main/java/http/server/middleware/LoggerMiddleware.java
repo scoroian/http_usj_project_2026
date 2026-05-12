@@ -35,4 +35,20 @@ public class LoggerMiddleware implements Middleware {
 
         next.run(); // continúa la cadena hacia el siguiente middleware o el router
     }
+    /**
+     * Añade una línea al fichero de log en disco.
+     * Crea el directorio "logs/" si no existe.
+     * Usa APPEND para no sobreescribir entradas anteriores.
+     *
+     * @param text línea de texto a añadir (ya incluye el salto de línea)
+     */
+    private void appendToLog(String text) {
+        try {
+            Path logFile = Path.of(Config.LOG_FILE);
+            Files.createDirectories(logFile.getParent());
+            Files.writeString(logFile, text, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+        } catch (IOException e) {
+            System.err.println("Log write error: " + e.getMessage());
+        }
+    }
 }
