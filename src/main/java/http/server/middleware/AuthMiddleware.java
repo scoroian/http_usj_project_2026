@@ -2,6 +2,7 @@ package http.server.middleware;
 
 import http.shared.HttpRequest;
 import http.shared.HttpResponse;
+import http.Config;
 
 /**
  * Middleware de autenticación por API key.
@@ -18,6 +19,18 @@ public class AuthMiddleware implements Middleware {
      */
     @Override
     public void apply(HttpRequest req, HttpResponse res, Runnable next) {
+         if (Config.API_KEY.isEmpty()) {
         next.run();
+        return;
+    }
+
+    String provided = req.headers.get("x-api-key");
+
+    if (!Config.API_KEY.equals(provided)) {
+        res.json(401, "{\"error\":\"Invalid or missing API key\"}");
+        return;
+    }
+
+    next.run();
     }
 }
