@@ -35,6 +35,15 @@ public class CatsHandler {
      * Devuelve un gato por ID, o 404 si no existe.
      */
     public void getOne(HttpRequest req, HttpResponse res) {
+          int id = parseId(req.params.get("id"));
+    Cat cat = cats.get(id);
+
+    if (cat == null) {
+        res.json(404, "{\"error\":\"Cat not found\"}");
+        return;
+    }
+
+    res.json(200, cat.toJson());
     }
 
     /**
