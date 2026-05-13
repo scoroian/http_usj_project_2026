@@ -56,6 +56,15 @@ public class CatsHandler {
      * Elimina un gato. 204 sin body si se eliminó, 404 si no existía.
      */
     public void remove(HttpRequest req, HttpResponse res) {
+         int id = parseId(req.params.get("id"));
+
+    if (!cats.containsKey(id)) {
+        res.json(404, "{\"error\":\"Cat not found\"}");
+        return;
+    }
+
+    cats.remove(id);
+    res.send(204, null, "");
     }
 
     /**
