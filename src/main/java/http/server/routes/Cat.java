@@ -20,19 +20,26 @@ public class Cat {
     }
 
     /**
-     * TODO: Samuel
-     * Serializa este gato a JSON: {"id":1,"name":"...","breed":"...","age":3}
+     * Serializa este gato a JSON.
+     * Escapa comillas y barras en los strings para no romper el JSON.
+     * Ejemplo de salida: {"id":1,"name":"Hercules","breed":"European","age":3}
+     *
+     * @return String JSON del gato
      */
     public String toJson() {
-        return "";
+        return String.format("{\"id\":%d,\"name\":\"%s\",\"breed\":\"%s\",\"age\":%d}",
+            id, escape(name), escape(breed), age);
     }
 
     /**
-     * TODO: Samuel
-     * Serializa una colección de gatos a un array JSON: [{...},{...}]
+     * Serializa una colección de gatos a un array JSON.
+     * Ejemplo: [{"id":1,...},{"id":2,...}]
+     *
+     * @param cats colección de gatos a serializar
+     * @return String JSON con el array completo
      */
     public static String listToJson(Collection<Cat> cats) {
-        return "[]";
+        return "[" + cats.stream().map(Cat::toJson).collect(Collectors.joining(",")) + "]";
     }
 
     /**
