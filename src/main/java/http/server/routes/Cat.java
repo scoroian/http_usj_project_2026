@@ -38,17 +38,40 @@ public class Cat {
     /**
      * TODO: Samuel
      * Extrae el valor de un campo String del JSON.
-     * Busca el patrón "key":"valor".
+     * Busca el patrón "key":"valor" y devuelve el valor entre comillas.
+     * Solo funciona con valores simples (sin objetos ni arrays anidados).
+     *
+     * @param json String JSON de donde extraer
+     * @param key  nombre del campo a buscar
+     * @return valor del campo, o null si el campo no existe
      */
     public static String extractString(String json, String key) {
-        return null;
+        String search = "\"" + key + "\":\"";
+        int start = json.indexOf(search);
+        if (start == -1) return null;
+        start += search.length();
+        int end = json.indexOf('"', start);
+        return end == -1 ? null : json.substring(start, end);
     }
 
     /**
      * TODO: Samuel
      * Extrae el valor de un campo numérico entero del JSON.
+     * Busca el patrón "key":valor y lee dígitos consecutivos.
+     * Soporta negativos (lee el '-' inicial si lo hay).
+     *
+     * @param json String JSON de donde extraer
+     * @param key  nombre del campo a buscar
+     * @return valor entero, o null si el campo no existe o no es un número válido
      */
     public static Integer extractInt(String json, String key) {
-        return null;
+        String search = "\"" + key + "\":";
+        int start = json.indexOf(search);
+        if (start == -1) return null;
+        start += search.length();
+        int end = start;
+        while (end < json.length() && (Character.isDigit(json.charAt(end)) || json.charAt(end) == '-')) end++;
+        try { return Integer.parseInt(json.substring(start, end)); }
+        catch (NumberFormatException e) { return null; }
     }
 }
