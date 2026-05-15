@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Refugio Felino USJ</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+
+  <nav>
+    <a href="/" class="brand">Refugio Felino</a>
+    <a href="/" class="active">Inicio</a>
+    <a href="/cats.html">Gatos</a>
+  </nav>
+
+  <main>
+    <div class="hero">
+      <h1>Refugio Felino USJ</h1>
+      <p>Donde cada gato encuentra su hogar</p>
+      <a href="/cats.html" class="btn btn-primary">Ver gatos disponibles</a>
+    </div>
+
+    <div class="card" style="margin-top: 2rem;">
+      <table class="api-table">
+        <thead>
+          <tr>
+            <th>Método</th>
+            <th>Ruta</th>
+            <th>Descripción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="method GET">GET</span></td>
+            <td>/cats</td>
+            <td>Lista todos los gatos</td>
+          </tr>
+          <tr>
+            <td><span class="method GET">GET</span></td>
+            <td>/cats/:id</td>
+            <td>Obtiene un gato por ID</td>
+          </tr>
+          <tr>
+            <td><span class="method POST">POST</span></td>
+            <td>/cats</td>
+            <td>Crea un gato nuevo</td>
+          </tr>
+          <tr>
+            <td><span class="method PUT">PUT</span></td>
+            <td>/cats/:id</td>
+            <td>Actualiza un gato existente</td>
+          </tr>
+          <tr>
+            <td><span class="method DELETE">DELETE</span></td>
+            <td>/cats/:id</td>
+            <td>Elimina un gato</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+
+  <footer>
+    Autores: Alberto &mdash; Julio &mdash; Samuel &mdash; Sebastian
+  </footer>
+
+</body>
+</html>

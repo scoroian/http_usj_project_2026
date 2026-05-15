@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gatos — Refugio Felino USJ</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+
+  <nav>
+    <a href="/" class="brand">Refugio Felino</a>
+    <a href="/">Inicio</a>
+    <a href="/cats.html" class="active">Gatos</a>
+    <a href="#" id="btn-api-key" onclick="event.preventDefault(); promptApiKey();">🔑 API key</a>
+  </nav>
+
+  <main>
+    <div class="page-header">
+      <h1>Gatos</h1>
+      <button class="btn btn-primary" id="btn-new">+ Añadir gato</button>
+    </div>
+
+    <div id="cats-grid" class="cats-grid">
+      <div class="empty-state">Cargando...</div>
+    </div>
+  </main>
+
+  <footer>
+    Redes y Comunicaciones II &mdash; Universidad San Jorge &mdash; 2026
+  </footer>
+
+  <!-- Modal: crear / editar gato -->
+  <div class="modal-overlay" id="modal-cat">
+    <div class="modal">
+      <h3 id="modal-title">Añadir gato</h3>
+      <form id="form-cat">
+        <input type="hidden" name="id" />
+        <div class="form-group">
+          <label for="input-name">Nombre</label>
+          <input type="text" id="input-name" name="name" placeholder="Hercules" required />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="input-breed">Raza</label>
+            <input type="text" id="input-breed" name="breed" placeholder="European" required />
+          </div>
+          <div class="form-group">
+            <label for="input-age">Edad</label>
+            <input type="number" id="input-age" name="age" placeholder="3" min="0" required />
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" id="btn-cancel">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="btn-submit">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
+  <script>
+    const grid = document.getElementById('cats-grid');
+    let editingId = null;
+
+    // Load and render all cats
+    async function loadCats() {
+      const { ok, data } = await api.getCats();
+      if (!ok || !data) {
+        grid.innerHTML = '<div class="empty-state">Error al cargar los gatos.</div>';
+        return;
+      }
+      if (data.length === 0) {
+        grid.innerHTML = '<div class="empty-state">No hay gatos registrados todavía.</div>';
+        return;
+      }
+
+      grid.innerHTML = '';
+      for (const cat of data) {
+        grid.appendChild(renderCatCard(cat, { onEdit: openEditModal, onDelete: handleDelete }));
+      }
+    }
+
+    // Open modal to create a new cat
+    document.getElementById('btn-new').addEventListener('click', () => {
+      editingId = null;
+      document.getElementById('modal-title').textContent = 'Añadir gato';
+      document.getElementById('btn-submit').textContent = 'Crear';
+      resetForm('form-cat');
+      openModal('modal-cat');
+    });
+
+    // Open modal pre-filled to edit an existing cat
+    function openEditModal(cat) {
+      editingId = cat.id;
+      document.getElementById('modal-title').textContent = 'Editar gato';
+      document.getElementById('btn-submit').textContent = 'Guardar cambios';
+      setFormValues('form-cat', cat);
+      openModal('modal-cat');
+    }
+
+    // Delete with confirmation
+    async function handleDelete(cat) {
+      if (!confirm(`Eliminar a ${cat.name}?`)) return;
+      const { ok } = await api.deleteCat(cat.id);
+      if (ok) {
+        toast(`${cat.name} eliminado`, 'success');
+        loadCats();
+      } else {
+        toast('Error al eliminar', 'error');
+      }
+    }
+
+    // Form submit: create or update
+    document.getElementById('form-cat').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const values = getFormValues('form-cat');
+      const payload = { name: values.name, breed: values.breed, age: Number(values.age) };
+
+      const btn = document.getElementById('btn-submit');
+      btn.disabled = true;
+
+      let result;
+      if (editingId) {
+        result = await api.updateCat(editingId, payload);
+      } else {
+        result = await api.createCat(payload);
+      }
+
+      btn.disabled = false;
+
+      if (result.ok) {
+        toast(editingId ? 'Gato actualizado' : 'Gato añadido', 'success');
+        closeModal('modal-cat');
+        loadCats();
+      } else {
+        const msg = result.data?.error || 'Error desconocido';
+        toast(`Error: ${msg}`, 'error');
+      }
+    });
+
+    document.getElementById('btn-cancel').addEventListener('click', () => closeModal('modal-cat'));
+
+    loadCats();
+  </script>
+
+</body>
+</html>
