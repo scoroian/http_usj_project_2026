@@ -81,4 +81,16 @@ public class Cat {
         try { return Integer.parseInt(json.substring(start, end)); }
         catch (NumberFormatException e) { return null; }
     }
+    /**
+     * Escapa los caracteres especiales de JSON en un String.
+     * Escapa '\' y '"' para que el JSON resultante sea válido.
+     *
+     * @param s String a escapar (puede ser null)
+     * @return String escapado, o "" si era null
+     */
+    private static String escape(String s) {
+        if (s == null) return "";
+        return s.replace("\\", "\\\\").replace("\"", "\\\"");
+    }
+    
 }
