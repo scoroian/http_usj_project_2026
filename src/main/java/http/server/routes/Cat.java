@@ -1,6 +1,7 @@
 package http.server.routes;
 
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 /**
  * POJO que representa un gato en el sistema.

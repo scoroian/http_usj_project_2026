@@ -1,7 +1,14 @@
 package http.server.middleware;
 
+import http.Config;
 import http.shared.HttpRequest;
 import http.shared.HttpResponse;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.time.Instant;
 
 /**
  * Middleware de logging.

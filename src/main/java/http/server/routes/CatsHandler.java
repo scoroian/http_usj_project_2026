@@ -24,10 +24,11 @@ public class CatsHandler {
     }
 
     /**
-     * TODO: Samuel — GET /cats
-     * Devuelve la lista completa de gatos en JSON con status 200.
+     * GET /cats — Devuelve la lista completa de gatos en JSON.
+     * Lee los valores del ConcurrentHashMap y los serializa a array JSON.
      */
     public void getAll(HttpRequest req, HttpResponse res) {
+        res.json(200, Cat.listToJson(cats.values()));
     }
 
     /**
