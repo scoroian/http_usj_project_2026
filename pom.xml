@@ -14,6 +14,16 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
+  <dependencies>
+    <!-- JUnit 5 — solo para tests, no entra en el jar final -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>5.10.2</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
   <build>
     <plugins>
       <!-- mvn exec:java  →  arranca el servidor -->
@@ -38,6 +48,12 @@
           <finalName>server</finalName>
           <outputDirectory>${project.basedir}</outputDirectory>
         </configuration>
+      </plugin>
+      <!-- mvn test  →  ejecuta los tests con JUnit 5 -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.2.5</version>
       </plugin>
     </plugins>
   </build>

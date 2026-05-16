@@ -11,26 +11,46 @@ import http.Config;
  */
 public class AuthMiddleware implements Middleware {
 
+    private final String apiKey;
+
+    /** Constructor por defecto: lee la API key de Config.API_KEY (variable de entorno). */
+    public AuthMiddleware() {
+        this(Config.API_KEY);
+    }
+
     /**
-     * TODO: Alberto
-     * Si Config.API_KEY está vacío → next.run() y salir.
-     * Leer cabecera "x-api-key". Si no coincide → 401 y cortar la cadena.
-     * Si coincide → next.run().
+     * Constructor explícito.
+     * Permite pasar una API key concreta (lo usan los tests para no depender de la
+     * variable de entorno API_KEY, que solo se lee al arrancar la JVM).
      */
+    public AuthMiddleware(String apiKey) {
+        this.apiKey = apiKey;
+    }
+
     @Override
     public void apply(HttpRequest req, HttpResponse res, Runnable next) {
-         if (Config.API_KEY.isEmpty()) {
+        if (apiKey.isEmpty()) {
+            next.run();
+            return;
+        }
+
+        // Solo protegemos la API REST: /cats y /cats/:id.
+        // Los archivos estáticos (HTML/CSS/JS) son públicos para que el navegador
+        // pueda cargar la página que luego envía la cabecera X-API-Key.
+        // Hay que excluir /cats.html porque empieza por "/cats" pero es estático.
+        String path = req.path.contains("?") ? req.path.substring(0, req.path.indexOf('?')) : req.path;
+        boolean isApiPath = path.equals("/cats") || path.startsWith("/cats/");
+        if (!isApiPath) {
+            next.run();
+            return;
+        }
+
+        String provided = req.headers.get("x-api-key");
+        if (!apiKey.equals(provided)) {
+            res.json(401, "{\"error\":\"Invalid or missing API key\"}");
+            return;
+        }
+
         next.run();
-        return;
-    }
-
-    String provided = req.headers.get("x-api-key");
-
-    if (!Config.API_KEY.equals(provided)) {
-        res.json(401, "{\"error\":\"Invalid or missing API key\"}");
-        return;
-    }
-
-    next.run();
     }
 }
